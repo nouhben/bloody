@@ -38,3 +38,19 @@ class BloodDonor(Person):
 
 class BloodReceiver(Person):
     pass
+
+
+class Examiner(Person):
+    pass
+
+
+class BloodSample(models.Model):
+    pass
+
+
+class BloodWork(models.Model):
+    pass
+
+
+class MedicalRecord(models.Model):
+    pass
