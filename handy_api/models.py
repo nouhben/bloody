@@ -8,22 +8,46 @@ import uuid
 
 
 class Address(models.Model):
-    country = models.CharField(max_length=100)
-    city = models.CharField(max_length=255)
-    street = models.CharField(max_length=255)
-    zipCode = models.CharField(max_length=10)
-    flat = models.CharField(max_length=255)
+    country = models.CharField(max_length=100, null=True, blank=True)
+    city = models.CharField(max_length=255, null=True, blank=True)
+    street = models.CharField(max_length=255, null=True, blank=True)
+    zipCode = models.CharField(max_length=10, null=True, blank=True)
+    flat = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f'{self.country}, flat {self.city}, zipcode {self.zipcode}'
 
 
 class HandyUser(models.Model):
     base = models.OneToOneField(User, models.CASCADE)
-    address = models.OneToOneField(Address, models.CASCADE, null=True)
+    address = models.OneToOneField(
+        Address, models.CASCADE, null=True, blank=True)
     image = models.ImageField(
         default='users_images/default.png', upload_to='users_images',
         null=True,
     )
     # extends the parent save to add functionality
     # we want to scale down the images uploaded by the users
+
+    def __str__(self) -> str:
+        return f'{self.base.username}'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        img = Image.open(self.image.path)
+        if img.height > 300 or img.width > 300:
+            output_size = (300, 300)
+            img.thumbnail(output_size)
+            img.save(self.image.path)
+
+
+class ProductImage(models.Model):
+    def __str__(self) -> str:
+        return f'{self.image.name}'
+    image = models.ImageField(
+        default='products_images/default.png',
+        upload_to='products_images',
+    )
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -39,18 +63,10 @@ class Product(models.Model):
     description = models.TextField()
     price = models.IntegerField(default=0)
     availableQuantity = models.IntegerField(default=1)
-    image = models.ImageField(
-        default='products_images/default.png',
-        upload_to='products_images',
-    )
+    image = models.ForeignKey(ProductImage, on_delete=models.CASCADE)
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        img = Image.open(self.image.path)
-        if img.height > 300 or img.width > 300:
-            output_size = (300, 300)
-            img.thumbnail(output_size)
-            img.save(self.image.path)
+    def __str__(self) -> str:
+        return f'{self.title}'
 
 
 class Cart(models.Model):
@@ -58,6 +74,9 @@ class Cart(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE
     )
+
+    def __str__(self) -> str:
+        return f'Cart {self.user}'
 
     @property
     def total(self):
@@ -71,7 +90,7 @@ class Cart(models.Model):
 
 class CartItem(models.Model):
     product = models.OneToOneField(Product, models.CASCADE)
-    product = models.OneToOneField(Cart, models.CASCADE)
+    # product = models.OneToOneField(Cart, models.CASCADE)
     quantity = models.SmallIntegerField(default=1)
     date_added = models.DateTimeField(auto_now_add=True)
 
