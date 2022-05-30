@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'bootstrap5',
     'widget_tweaks',
     'rest_framework',
+    'rest_framework_api_key',
     # own apps
     'core.apps.CoreConfig',
     'handy_api.apps.HandyApiConfig',
