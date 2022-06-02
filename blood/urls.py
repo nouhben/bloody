@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -22,3 +24,10 @@ urlpatterns = [
     path('blood/', include('handy_api.urls')),
     path('unicorn/', include('handy_api.urls')),
 ]
+
+# add static files directories to the path
+#urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+
+handler404 = 'core.views.error_404'
+handler500 = 'core.views.error_500'
