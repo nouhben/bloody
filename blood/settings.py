@@ -145,7 +145,7 @@ MEDIA_URL = '/assets/'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # redirect the user to home page when successfully logged in
-# LOGIN_REDIRECT_URL = 'blog-home'
+LOGIN_REDIRECT_URL = 'blog-home'
 # this is the url that django will use when requesting login from any place
 # by defaults it looks in /accounts/login.html
-# LOGIN_URL = 'login'
+LOGIN_URL = 'login'
